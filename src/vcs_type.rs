@@ -1,7 +1,6 @@
 use std::{fmt::Display, str::FromStr, fmt};
 use crate::GpiError;
 use serde::{Serialize, Deserialize};
-use std::fmt::Debug;
 use std::convert::From;
 
 #[serde(rename_all = "lowercase")]
@@ -25,6 +24,12 @@ impl Display for VcsType {
         };
 
         write!(f, "{}", vcs)
+    }
+}
+
+impl AsRef<VcsType> for VcsType {
+    fn as_ref(&self) -> &VcsType {
+        return self
     }
 }
 
@@ -56,7 +61,6 @@ impl From<String> for VcsType {
 
 impl FromStr for VcsType {
     type Err = GpiError;
-
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_ref() {
             "git" => Ok(VcsType::Git),

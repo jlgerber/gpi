@@ -27,6 +27,7 @@ pub struct Record {
 }
 
 impl Record {
+    /// new up a record
     pub fn new<I: Into<String>>(record_type: I, sources: Vec<Source>) -> Record {
         Self {
             rtype: record_type.into(),
@@ -34,11 +35,18 @@ impl Record {
         }
     }
 
-
+    /// Add a source, returning success/failure.
+    pub fn add_source(&mut self, source: Source) -> bool {
+        if !self.has_vcs(&source.uses) {
+            self.sources.push(source);
+            return true;
+        }
+        false
+    }
     /// Given a tag name, determine whether the Record contains a tag
-    pub fn has_vcs(&self, vcs: VcsType) -> bool {
+    pub fn has_vcs<T: AsRef<VcsType>>(&self, vcs: T) -> bool {
         for source in self.sources.iter() {
-            if source.uses == vcs {
+            if &source.uses == vcs.as_ref() {
                 return true;
             }
         }
