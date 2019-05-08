@@ -10,3 +10,4 @@ pub mod vcs_tag;
 pub use vcs_tag::VcsTag;
 pub mod gpi;
 pub use gpi::GPI;
+pub(crate) mod constants;
