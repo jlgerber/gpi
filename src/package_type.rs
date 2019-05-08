@@ -26,6 +26,9 @@ impl From<String> for PackageType {
     }
 }
 
+// impl PackageType {
+//     pub fn tag_for_vcs(&self, vcs: VcsType) ->
+// }
 #[cfg(test)]
 mod tests {
     use super::*;

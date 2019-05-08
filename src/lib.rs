@@ -6,3 +6,7 @@ pub mod vcs_type;
 pub use vcs_type::VcsType;
 pub mod package_type;
 pub use package_type::PackageType;
+pub mod vcs_tag;
+pub use vcs_tag::VcsTag;
+pub mod gpi;
+pub use gpi::GPI;

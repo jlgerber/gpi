@@ -4,8 +4,13 @@
 
 use serde::{Serialize,Deserialize};
 use std::path::PathBuf;
+use std::io::Read;
+use crate::GpiError;
+use crate::PackageType;
+use crate::VcsTag;
 use crate::VcsType;
 use url::Url;
+
 /*
  {
   "type": "source",
@@ -22,17 +27,31 @@ use url::Url;
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 pub struct Record {
     #[serde(rename = "type")]
-    pub rtype: String,
+    pub rtype: PackageType,
     pub sources: Vec<Source>
 }
 
 impl Record {
     /// new up a record
-    pub fn new<I: Into<String>>(record_type: I, sources: Vec<Source>) -> Record {
+    pub fn new<I: AsRef<str>>(record_type: I, sources: Vec<Source>) -> Record {
         Self {
-            rtype: record_type.into(),
+            rtype: PackageType::from(record_type.as_ref()),
             sources
         }
+    }
+
+    /// Convert a `Read`er into json.
+    ///
+    /// # Parameters
+    ///
+    /// * `reader` - Implementer of the `io::Read` trait. For instance, a File, or BufReader.
+    ///
+    /// # Returns
+    ///
+    /// A result wrapping either a Record, or a GpiError
+    pub fn from_reader<R: Read>(reader: R) -> Result<Record, GpiError> {
+        let r = serde_json::from_reader(reader)?;
+        Ok(r)
     }
 
     /// Add a source, returning success/failure.
@@ -53,18 +72,6 @@ impl Record {
         false
     }
 
-    /// Given a tag name, determine whether the Record contains a tag
-    pub fn has_tag(&self, tag: &str) -> bool {
-        for source in self.sources.iter() {
-            let pieces = source.tags.split("/");
-            for piece in pieces {
-                if tag == piece {
-                    return true;
-                }
-            }
-        }
-        false
-    }
 }
 
 #[serde(rename_all = "lowercase")]
@@ -73,12 +80,11 @@ pub struct Source {
     pub uses: VcsType,
     #[serde(with = "url_serde")]
     pub link: Url,
-    pub tags: String,
+    pub tags: VcsTag,
     pub subdirectory: Option<PathBuf>,
     #[serde(rename = "initSubmodules")]
     pub init_submodules: Option<bool>,
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -103,12 +109,12 @@ r#"
     fn can_deserialize_json() {
         let result:Record = serde_json::from_str(JSON_RECORD).unwrap();
         let expected = Record {
-            rtype: "source".to_string(),
+            rtype: PackageType::Source,
             sources: vec![
                 Source {
                     uses: VcsType::Svn,
                     link: Url::parse("http://dd-svn.d2.com/svn/software/packages/prez").unwrap(),
-                    tags: "tags/%".to_string(),
+                    tags: VcsTag::TagsLoc,
                     subdirectory: None,
                     init_submodules: None,
                 }
@@ -121,17 +127,31 @@ r#"
     fn can_new_up() {
         let record = Record::new("source", Vec::new());
         let expected = Record {
-            rtype: "source".to_string(),
+            rtype: PackageType::Source,
             sources: Vec::new()
         };
         assert_eq!(record, expected);
     }
 
+
     #[test]
-    fn has_tag() {
-        let record: Record = serde_json::from_str(JSON_RECORD).unwrap();
-        assert!(record.has_vcs(VcsType::Svn));
-        assert!(!record.has_vcs(VcsType::Git));
+    fn can_deserialize_from_reader() {
+        let result:Record = Record::from_reader(JSON_RECORD.as_bytes()).unwrap();
+        let expected = Record {
+            rtype: PackageType::Source,
+            sources: vec![
+                Source {
+                    uses: VcsType::Svn,
+                    link: Url::parse("http://dd-svn.d2.com/svn/software/packages/prez").unwrap(),
+                    tags: VcsTag::TagsLoc,
+                    subdirectory: None,
+                    init_submodules: None,
+                }
+            ]
+        };
+        assert_eq!(result, expected);
     }
+
+
 
 }
