@@ -32,6 +32,15 @@ impl From<String> for VcsTag {
     }
 }
 
+impl std::string::ToString for VcsTag {
+    fn to_string(&self) -> String {
+        match self {
+            VcsTag::TagsLoc => "tags/%".to_string(),
+            VcsTag::TrunkLoc => "%".to_string(),
+            VcsTag::Unknown(value) => format!("unknown({})", value)
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {

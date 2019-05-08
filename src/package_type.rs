@@ -26,6 +26,20 @@ impl From<String> for PackageType {
     }
 }
 
+impl std::fmt::Display for PackageType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        match self {
+            &PackageType::Source =>  write!(f, "source"),
+            &PackageType::Port =>  write!(f, "port"),
+            &PackageType::Unknown =>  write!(f, "unknown"),
+        }
+    }
+}
+
 // impl PackageType {
 //     pub fn tag_for_vcs(&self, vcs: VcsType) ->
 // }

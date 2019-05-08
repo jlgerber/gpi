@@ -34,7 +34,7 @@ impl GPI {
     ///
     /// Result wrapping a Json String, if successful, or a GpiError if not successful
     pub fn get_json(package: &str) -> Result<String, GpiError> {
-        let request = format!("{}::/{}/api/{}/projects/{}/repository/files/packages%2F{}%2Ejson/raw?ref=master",
+        let request = format!("{}://{}/api/{}/projects/{}/repository/files/packages%2F{}%2Ejson/raw?ref=master",
             PROTOCOL, HOSTNAME, API_VERSION, PROJECT_ID, package ) ;
         let result = _get_package_json(request.as_str())?;
 

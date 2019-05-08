@@ -11,3 +11,6 @@ pub use vcs_tag::VcsTag;
 pub mod gpi;
 pub use gpi::GPI;
 pub(crate) mod constants;
+
+pub mod printutils;
+pub use printutils::table_record;
