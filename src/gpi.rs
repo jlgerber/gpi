@@ -19,6 +19,10 @@ impl GPI {
     /// Result wrapping a Record if successful, and a GpiError if not successful
     pub fn get_record(package: &str) -> Result<Record, GpiError> {
         let result = GPI::get_json(package)?;
+        if result == "{\"message\":\"404 File Not Found\"}" {
+            return Err(GpiError::MissingPackage(package.to_string()))
+        }
+
         let record: Record = serde_json::from_str(result.as_str())?;
 
         Ok(record)

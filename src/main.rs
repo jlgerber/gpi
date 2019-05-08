@@ -8,7 +8,6 @@ fn main() -> Result<(), gpi::GpiError> {
     if let Some(package) = args.nth(1) {
         let pkg = GPI::get_record(&package)?;
         table_record(&package, &pkg);
-        //println!("{:#?}", pkg);
     } else {
         println!("please supply a package name");
     };

@@ -8,6 +8,8 @@ pub enum GpiError {
     #[fail(display = "{}", _0)]
     JsonError(#[fail(cause)] serde_json::Error),
     #[fail(display = "{}", _0)]
+    MissingPackage(String),
+    #[fail(display = "{}", _0)]
     FailureError(#[fail(cause)] failure::Error),
 }
 
