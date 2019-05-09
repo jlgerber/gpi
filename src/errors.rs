@@ -7,6 +7,8 @@ pub enum GpiError {
     UnknownVcs(String),
     #[fail(display = "{}", _0)]
     JsonError(#[fail(cause)] serde_json::Error),
+    #[fail(display="{}",_0)]
+    ConversionError(String),
     #[fail(display = "{}", _0)]
     MissingPackage(String),
     #[fail(display = "{}", _0)]
@@ -22,5 +24,11 @@ impl From<serde_json::Error> for GpiError {
 impl From<failure::Error> for GpiError {
    fn from(e: failure::Error) -> GpiError {
        GpiError::FailureError(e)
+    }
+}
+
+impl From<&str> for GpiError {
+   fn from(e: &str) -> GpiError {
+       GpiError::ConversionError(e.to_string())
     }
 }
