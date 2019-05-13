@@ -1,7 +1,7 @@
 pub mod errors;
 pub use errors::GpiError;
 pub mod record;
-pub use record::{Record};
+pub use record::{Record, Source};
 pub mod vcs_type;
 pub use vcs_type::VcsType;
 pub mod package_type;
@@ -16,3 +16,9 @@ pub use gpi_file::GpiFile;
 
 pub mod printutils;
 pub use printutils::table_record;
+
+pub mod pkg_cmds;
+pub use pkg_cmds::new_package;
+
+pub(crate) mod gitlab_server;
+pub(crate) use gitlab_server::GitlabServer;

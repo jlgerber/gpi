@@ -10,6 +10,7 @@ use crate::PackageType;
 use crate::VcsTag;
 use crate::VcsType;
 use url::Url;
+use std::str::FromStr;
 
 /*
  {
@@ -27,15 +28,15 @@ use url::Url;
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 pub struct Record {
     #[serde(rename = "type")]
-    pub rtype: PackageType,
+    pub package_type: PackageType,
     pub sources: Vec<Source>
 }
 
 impl Record {
     /// new up a record
-    pub fn new<I: AsRef<str>>(record_type: I, sources: Vec<Source>) -> Record {
+    pub fn new(package_type: PackageType, sources: Vec<Source>) -> Record {
         Self {
-            rtype: PackageType::from(record_type.as_ref()),
+            package_type: package_type,
             sources
         }
     }
@@ -86,6 +87,25 @@ pub struct Source {
     pub init_submodules: Option<bool>,
 }
 
+impl Source {
+    pub fn new(
+        vcs_type:VcsType,
+        link: Url,
+        tags:VcsTag,
+        subdirectory: Option<PathBuf>,
+        init_submodules: Option<bool>
+    ) -> Source {
+        Source {
+            uses: vcs_type,
+            link,
+            tags,
+            subdirectory,
+            init_submodules
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
 
@@ -109,7 +129,7 @@ r#"
     fn can_deserialize_json() {
         let result:Record = serde_json::from_str(JSON_RECORD).unwrap();
         let expected = Record {
-            rtype: PackageType::Source,
+            package_type: PackageType::Source,
             sources: vec![
                 Source {
                     uses: VcsType::Svn,
@@ -125,9 +145,9 @@ r#"
 
     #[test]
     fn can_new_up() {
-        let record = Record::new("source", Vec::new());
+        let record = Record::new(PackageType::from_str("source").unwrap(), Vec::new());
         let expected = Record {
-            rtype: PackageType::Source,
+            package_type: PackageType::Source,
             sources: Vec::new()
         };
         assert_eq!(record, expected);
@@ -138,7 +158,7 @@ r#"
     fn can_deserialize_from_reader() {
         let result:Record = Record::from_reader(JSON_RECORD.as_bytes()).unwrap();
         let expected = Record {
-            rtype: PackageType::Source,
+            package_type: PackageType::Source,
             sources: vec![
                 Source {
                     uses: VcsType::Svn,

@@ -7,7 +7,7 @@ pub fn table_record(package: &str, record: &Record) {
         let mut table = table!(
             [FYbH2c -> "Global Package Index Record"],
             [FYb -> "Package",     Fwb -> package],
-            [FYb -> "Type",   Fwb ->  record.rtype.to_string()],
+            [FYb -> "Type",   Fwb ->  record.package_type.to_string()],
             [FYbH2c -> "Sources"]
         );
         for source in &record.sources {

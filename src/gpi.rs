@@ -49,6 +49,25 @@ impl GPI {
         Ok(result)
     }
 
+    /// Test to see whether a package with the supplied name exists
+    ///
+    /// # Parameters
+    ///
+    /// * `package` Name of package to look up in GPI
+    /// * `verbose` print out details
+    ///
+    /// # Returns
+    ///
+    /// Result wrapping a bool, if successful, or a GpiError if not successful
+    pub fn package_exists(package: &str, verbose: bool) -> Result<bool, GpiError> {
+        let request = format!("{}://{}/api/{}/projects/{}/repository/files/packages%2F{}%2Ejson?ref=master",
+            PROTOCOL, HOSTNAME, API_VERSION, PROJECT_ID, package ) ;
+            if verbose {
+                println!("Request: '{}'", request);
+            }
+        let result = _package_exists(request.as_str())?;
+        Ok(result)
+    }
 
     /// Retrieve package list from GPI as json
     ///
@@ -71,11 +90,21 @@ impl GPI {
 
         Ok(result)
     }
+
+
 }
 
 // retrieve the json from
 #[shell]
 fn _get_package_json(request: &str) -> Result<String, failure::Error> {
+    r#"
+        /usr/bin/curl -s --request GET "$REQUEST"
+    "#
+}
+
+// retrieve the json from
+#[shell]
+fn _package_exists(request: &str) -> Result<bool, failure::Error> {
     r#"
         /usr/bin/curl -s --request GET "$REQUEST"
     "#
@@ -87,3 +116,10 @@ fn _get_packages_json(request: &str) -> Result<impl Iterator<Item=String>, failu
         /usr/bin/curl -s --request GET "$REQUEST"
     "#
 }
+
+/*
+curl --request POST --header 'PRIVATE-TOKEN: <your_access_token>' --header "Content-Type: application/json" \
+  --data '{"branch": "master", "author_email": "author@example.com", "author_name": "Firstname Lastname", \
+    "content": "some content", "commit_message": "create a new file"}' \
+  'https://gitlab.example.com/api/v4/projects/13083/repository/files/app%2Fproject%2Erb'
+ */

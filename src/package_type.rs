@@ -1,5 +1,7 @@
 use serde::{Serialize,Deserialize};
 use std::convert::From;
+use std::str::FromStr;
+use crate::GpiError;
 
 /// The type as defined in the plobal packages index
 #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Clone, Serialize, Deserialize)]
@@ -25,6 +27,18 @@ impl From<String> for PackageType {
         PackageType::from(value.as_ref())
     }
 }
+
+
+impl FromStr for PackageType {
+    type Err = GpiError;
+
+    fn from_str(s: &str) -> Result<PackageType, Self::Err> {
+       let ptype =  PackageType::from(s);
+       if PackageType::Unknown == ptype { return Err(GpiError::UnknownPackageType(s.to_owned())); }
+       Ok(ptype)
+    }
+}
+
 
 impl std::fmt::Display for PackageType {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {

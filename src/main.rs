@@ -1,4 +1,4 @@
-use gpi::{ GPI, table_record, VcsType };
+use gpi::{ GPI, table_record, VcsType, new_package };
 use structopt::StructOpt;
 
 /// Commands to interact with the Global Package Index, which
@@ -44,6 +44,18 @@ enum GpiCmd {
         /// The name of the package to create
         #[structopt(name = "PACKAGE")]
         package: String,
+        /// The url to the package in the vcs
+        #[structopt(short = "l", long="link")]
+        link: String,
+        ///the type of the package to create
+        #[structopt(short = "t", long="type")]
+        ptype: String,
+        /// Provide details
+        #[structopt(short = "v", long="verbose")]
+        verbose: bool,
+        /// Provide details
+        #[structopt(short = "d", long="dry-run")]
+        dryrun: bool
     },
     /// Add a repo for a package in the global package index
     #[structopt(name = "add")]
@@ -93,8 +105,13 @@ fn process_cmds() -> Result<(), gpi::GpiError> {
                 println!("{:#?}", pkg);
             }
         },
-        GpiCmd::New { scm, package,  } => {
-            println!("Creating the package named '{}' in the '{}' source code management system is not supported yet",  package, scm);
+        GpiCmd::New { scm, package, link, ptype, verbose, dryrun  } => {
+            match new_package(package.as_str(), link.as_str(), ptype.as_str(), scm, verbose, dryrun)? {
+                // dryryn is false
+                Some(response) => println!("{:#?}", response),
+                // dryrun is true
+                None => {},
+            }
         },
         GpiCmd::Add { scm, package  } => {
             println!("Adding '{}' to the '{}' record in the GPI not supported yet", scm, package);
