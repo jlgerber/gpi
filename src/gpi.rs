@@ -43,7 +43,7 @@ impl GPI {
         let request = format!("{}://{}/api/{}/projects/{}/repository/files/packages%2F{}%2Ejson/raw?ref=master",
             PROTOCOL, HOSTNAME, API_VERSION, PROJECT_ID, package ) ;
             if verbose {
-                println!("Request: '{}'", request);
+                println!("get_json() Request: '{}'", request);
             }
         let result = _get_package_json(request.as_str())?;
         Ok(result)
@@ -63,7 +63,7 @@ impl GPI {
         let request = format!("{}://{}/api/{}/projects/{}/repository/files/packages%2F{}%2Ejson?ref=master",
             PROTOCOL, HOSTNAME, API_VERSION, PROJECT_ID, package ) ;
             if verbose {
-                println!("Request: '{}'", request);
+                println!("package_exists() Request: '{}'", request);
             }
         let result = _package_exists(request.as_str())?;
         Ok(result)
@@ -82,7 +82,7 @@ impl GPI {
         let request = format!("{}://{}/api/{}/projects/{}/repository/tree?ref=master&path=packages&per_page=1000&page={}",
             PROTOCOL, HOSTNAME, API_VERSION, PROJECT_ID, page ) ;
         if verbose {
-            println!("get_packages route: {}", request.as_str());
+            println!("get_packages() route: {}", request.as_str());
         }
         let mut requests = _get_packages_json(request.as_str())?;
 
