@@ -14,7 +14,10 @@ use std::str::FromStr;
 
 pub fn new_package(name: &str, link: &str, ptype: &str, vcs: VcsType, verbose: bool, dryrun: bool) -> Result<Option<reqwest::Response>, GpiError> {
     // test to see if package already exists
-    let exists = GPI::package_exists(name, verbose)?;
+    let exists = match GPI::package_exists(name, verbose){
+        Ok(v) => v,
+        Err(e) => {println!("error occured looking up whether package exists"); return Err(e);}
+    };
     if exists {
         return Err(GpiError::PackageLookupError(name.to_string(), "Package already exists".to_string()));
     }
