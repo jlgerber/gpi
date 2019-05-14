@@ -53,7 +53,7 @@ enum GpiCmd {
         /// Provide details
         #[structopt(short = "v", long="verbose")]
         verbose: bool,
-        /// Provide details
+        /// dry run
         #[structopt(short = "d", long="dry-run")]
         dryrun: bool
     },
@@ -105,7 +105,11 @@ fn process_cmds() -> Result<(), gpi::GpiError> {
                 println!("{:#?}", pkg);
             }
         },
+        //pub fn new_package(name: &str, link: &str, ptype: &str, vcs: VcsType, verbose: bool, dryrun: bool) -> Result<Option<reqwest::Response>, GpiError> {
         GpiCmd::New { scm, package, link, ptype, verbose, dryrun  } => {
+            if verbose {
+                println!("scm {:?} package: {} link: {} ptype: {:?}", scm, package, link, ptype);
+            }
             match new_package(package.as_str(), link.as_str(), ptype.as_str(), scm, verbose, dryrun)? {
                 // dryryn is false
                 Some(response) => println!("{:#?}", response),
