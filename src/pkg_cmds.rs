@@ -18,6 +18,9 @@ pub fn new_package(name: &str, link: &str, ptype: &str, vcs: VcsType, verbose: b
     if exists {
         return Err(GpiError::PackageLookupError(name.to_string(), "Package already exists".to_string()));
     }
+    if verbose {
+        println!("package does not exist. looking up url");
+    }
     // lookup link
     let link = url::Url::from_str(link)?;
     println!("link: {:?}", link);
