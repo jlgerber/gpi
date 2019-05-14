@@ -66,7 +66,10 @@ impl GPI {
                 println!("package_exists() Request: '{}'", request);
             }
         let result = _package_exists(request.as_str())?;
-        Ok(result)
+        if result == "{\"message\":\"404 File Not Found\"}" {
+            return Ok(false);
+        }
+        Ok(true)
     }
 
     /// Retrieve package list from GPI as json
@@ -104,7 +107,7 @@ fn _get_package_json(request: &str) -> Result<String, failure::Error> {
 
 // retrieve the json from
 #[shell]
-fn _package_exists(request: &str) -> Result<bool, failure::Error> {
+fn _package_exists(request: &str) -> Result<String, failure::Error> {
     r#"
         /usr/bin/curl -s --request GET "$REQUEST"
     "#
