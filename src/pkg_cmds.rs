@@ -28,7 +28,7 @@ pub fn new_package(name: &str, link: &str, ptype: &str, vcs: VcsType, verbose: b
     let link = url::Url::from_str(link)?;
     println!("link: {:?}", link);
     // lookup record type
-    let rtype = PackageType::from_str(name)?;
+    let rtype = PackageType::from_str(ptype)?;
     if verbose {
         println!("PackageType {:?}", rtype);
     }
