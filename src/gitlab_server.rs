@@ -5,17 +5,20 @@ use url::Url;
 use std::str::FromStr;
 
 /// The server in which we store the gpi
-pub struct GitlabServer {}
+pub struct GitlabServer {
+    pub verbose: bool
+}
 
 impl GitlabServer {
     pub fn new() -> Self {
-        Self {}
+        Self {verbose: false}
     }
     fn get_package_route(&self, package:&str) -> String {
         // dont think i have to do this --------------->
         //"api/{}/projects/{}/repository/files/packages%2F{}%2Ejson"
         format!(
-            "api/{}/projects/{}/repository/files/packages/{}.json",
+            "api/{}/projects/{}/repository/files/packages%2F{}%2Ejson",
+            //"api/{}/projects/{}/repository/files/packages/{}.json",
             API_VERSION,
             PROJECT_ID,
             package
